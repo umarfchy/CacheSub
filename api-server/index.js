@@ -37,7 +37,7 @@ const dbConfig = {
 };
 
 const app = express();
-const publisher = createClient({ url: redisUrl });
+const redisClient = createClient({ url: redisUrl });
 
 const getData = async () => {
   const sqlQuery = `SELECT data FROM ${sqlTable}`;
@@ -51,13 +51,28 @@ const createData = async (data) => {
   return sqlConnection.execute(sqlQuery);
 };
 
+const cacheToRedis = async (jsonData) => {
+  const value = JSON.stringify({ isCached: "yes", data: jsonData });
+  return redisChannel.set("key", value);
+};
+
 // express endpoints
 app.use(express.json());
 app.get("/", (_, res) => res.status(200).send("connected to server 1!"));
 app.get("/data", async (_, res) => {
   try {
-    const [results, _] = await getData();
-    res.status(200).json({ message: "success", results });
+    const cachedData = await redisChannel.get("key");
+    if (cachedData) {
+      const results = JSON.parse(results);
+      res.status(200).json({ message: "success", ...results });
+      // ending the fn
+      return;
+    }
+
+    const [data, _] = await getData();
+    await cacheToRedis(data);
+
+    res.status(200).json({ message: "success", isCached: "no", data });
   } catch (error) {
     res.status(500).json({ message: "failure", error });
   }
@@ -66,7 +81,9 @@ app.get("/data", async (_, res) => {
 app.post("/create", async (req, res) => {
   const { data } = req.body;
   try {
-    const subscriberCount = await publisher.publish(redisChannel, data);
+    const subscriberCount = await redisClient.publish(redisChannel, data);
+    const delRes = await redisChannel.del("key");
+    console.log(delRes);
     res.status(200).json({ message: "success", subscriberCount });
   } catch (error) {
     res.status(500).json({ message: "failure", error });

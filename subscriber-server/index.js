@@ -22,11 +22,6 @@ const sqlPassword = process.env.MYSQL_PASSWORD || "password";
 const sqlDatabase = process.env.MYSQL_DATABASE || "mydb";
 const sqlTable = process.env.MYSQL_TABLE || "mytable";
 
-// debug with following -
-// console.log({ expressPort, redisUsername, redisPassword, redisHost, redisPort, redisChannel });
-
-console.log({ sqlHost, sqlUser, sqlPassword, sqlDatabase });
-
 // configs
 const redisUrl = `redis://${redisUsername}:${redisPassword}@${redisHost}:${redisPort}`;
 const dbConfig = {
@@ -36,20 +31,19 @@ const dbConfig = {
   database: sqlDatabase,
 };
 
+// helper fn for DB
 const createData = async (data) => {
   const sqlQuery = `INSERT INTO ${sqlTable} (data) VALUES ('${data}')`;
   const sqlConnection = await mysql.createConnection(dbConfig);
   return sqlConnection.execute(sqlQuery);
 };
 
-// for debug purpose
-// console.log({ port, username, password, redisHost, redisPort, channel });
-
 const subscriber = createClient({ url: redisUrl });
-
 (async function () {
   try {
     subscriber.connect();
+
+    // redis status logger
     subscriber.on("error", (err) => console.log("Redis error", err));
     subscriber.on("connect", () => console.log("\n Connected to Redis \n"));
     subscriber.on("ready", () => console.log("\n Redis ready for action! \n"));
