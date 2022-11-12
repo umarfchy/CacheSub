@@ -18,7 +18,7 @@ const subscriber = createClient({
 
 (async function () {
   try {
-    await subscriber.connect();
+    subscriber.connect();
     subscriber.on("error", (err) => console.log("Redis error", err));
     subscriber.on("connect", () => console.log("\n Connected to Redis \n"));
     subscriber.on("ready", () => console.log("\n Redis ready for action! \n"));
@@ -27,7 +27,7 @@ const subscriber = createClient({
     });
 
     // the call back fn is required
-    await subscriber.subscribe(channel, (message) => {
+    subscriber.subscribe(channel, (message) => {
       console.log(message);
     });
   } catch (error) {
