@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default function Home() {
   const [value, updateValue] = useState("create new data");
-  const baseUrl = "http://mynetwork:5001";
+  const baseUrl = "http://localhost:5001";
   const getDataUrl = `${baseUrl}/data`;
   const createDataUrl = `${baseUrl}/create`;
 
@@ -21,7 +21,7 @@ export default function Home() {
     try {
       const { data: res } = await axios.get(getDataUrl);
       updateValue(res.data);
-      console.log({ message: "got data", data });
+      console.log({ message: "got data", data: res.data });
       return res;
     } catch (error) {
       console.error({ message: "failed fetching data.", error });
@@ -57,7 +57,7 @@ export default function Home() {
         }}
       >
         <h3>output</h3>
-        <p>{value}</p>
+        <p>{JSON.stringify(value, null, 2)}</p>
       </section>
     </main>
   );

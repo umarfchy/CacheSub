@@ -1,78 +1,77 @@
 version: '3'
 
 services:
-  #   client:
-  #     container_name: "client-app"
-  #     build: ./client-app/.
-  #     ports:
-  #       - '3000:3000'
-  #     networks:
-  #       - mynetwork
-  #     depends_on:
-  #       - redis
-  #       - server-1
-  #       - server-2
-  #       - db
+  client:
+    container_name: "client-app"
+    build: ./client-app/.
+    ports:
+      - '3000:3000'
+    networks:
+      - mynetwork
+    depends_on:
+      - redis
+      - db
+      - api-server
+      - subscriber-server
 
   api-server:
     container_name: "api-server"
     build: ./api-server/.
     environment:
       - PORT=5001
-      # - REDIS_USERNAME=
-      - REDIS_PASSWORD=mypassword
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - CHANNEL=channel1
-      - MYSQL_HOST=mydb
-      - MYSQL_DATABASE=mydb
-      - MYSQL_USERNAME=root
-      - MYSQL_PASSWORD=password
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_CHANNEL=${REDIS_CHANNEL}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_TABLE=${MYSQL_TABLE}
     ports:
       - '5001:5001'
     networks:
       - mynetwork
     depends_on:
-      # - redis
       - db
+      - redis
+      - subscriber-server
 
-  # subscriber-server:
-  #   container_name: "subscriber-server"
-  #   build: ./subscriber-server/.
-  #   # ports:
-  #   #   - '5002:5002'
-  #   environment:
-  #     - PORT=5002
-  #     - REDIS_USERNAME=
-  #     - REDIS_PASSWORD=mypassword
-  #     - REDIS_HOST=redis
-  #     - REDIS_PORT=6379
-  #     - CHANNEL=channel1
-  #   networks:
-  #     - mynetwork
-  #   depends_on:
-  #     - redis
-
-  db:
-    container_name: "db"
-    image: mysql:8.0
-    restart: always
+  subscriber-server:
+    container_name: "subscriber-server"
+    build: ./subscriber-server/.
     environment:
-      - MYSQL_DATABASE=mydb
-      - MYSQL_ROOT_PASSWORD=password
-    ports:
-      - '3306:3306'
+      - PORT=5002
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_CHANNEL=${REDIS_CHANNEL}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_TABLE=${MYSQL_TABLE}
     networks:
       - mynetwork
-  # redis:
-  #   container_name: "redis-service"
-  #   image: "redis:latest"
-  #   restart: always
-  #   command: redis-server --save 20 1 --loglevel warning --requirepass mypassword
-  #   # ports:
-  #   #   - '6379:6379'
-  #   networks:
-  #     - mynetwork
+    depends_on:
+      - db
+      - redis
+
+  db:
+    container_name: "mysql-db"
+    build: ./db/.
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    networks:
+      - mynetwork
+
+  redis:
+    container_name: "redis-service"
+    image: "redis:latest"
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass mypassword
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:

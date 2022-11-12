@@ -10,6 +10,6 @@ POST http://localhost:5001/create
 Content-Type: application/json
 
 {
-  "data": "from 1"
+  "data": "new data"
 }
 
