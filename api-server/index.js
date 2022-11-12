@@ -51,17 +51,6 @@ const createData = async (data) => {
   return sqlConnection.execute(sqlQuery);
 };
 
-// const publisher = createClient();
-
-// publisher events adn status
-publisher.connect();
-publisher.on("error", (err) => console.log("Redis error", err));
-publisher.on("connect", () => console.log("\n Connected to Redis \n"));
-publisher.on("ready", () => console.log("\n Redis ready for action! \n"));
-publisher.on("reconnecting", () => console.log("\n Reconnecting to Redis \n"));
-
-// call back fn is required
-
 // express endpoints
 app.use(express.json());
 app.get("/", (_, res) => res.status(200).send("connected to server 1!"));
@@ -75,12 +64,10 @@ app.get("/data", async (_, res) => {
 });
 
 app.post("/create", async (req, res) => {
-  const { data } = req?.body;
+  const { data } = req.body;
   try {
-    // const subscriberCount = await publisher.publish(redisChannel, data);
-    const results = await createData(data);
-    // res.status(200).json({ message: "success", subscriberCount });
-    res.status(200).json({ message: "success", results });
+    const subscriberCount = await publisher.publish(redisChannel, data);
+    res.status(200).json({ message: "success", subscriberCount });
   } catch (error) {
     res.status(500).json({ message: "failure", error });
   }
