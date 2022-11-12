@@ -1,48 +1,90 @@
 "use strict";
+import dotenv from "dotenv";
+import express from "express";
+import { createClient } from "redis";
+import mysql from "mysql2/promise";
 
-require("dotenv");
-const express = require("express");
-const { createClient } = require("redis");
-
+dotenv.config();
 // environment variables
-const port = process.env.PORT || 3000;
-const username = process.env.REDIS_USERNAME || "";
-const password = process.env.REDIS_PASSWORD || "password";
+const expressPort = process.env.PORT || 5001;
+
+// redis
+const redisUsername = process.env.REDIS_USERNAME || "";
+const redisPassword = process.env.REDIS_PASSWORD || "password";
 const redisHost = process.env.REDIS_HOST || "redis";
 const redisPort = process.env.REDIS_PORT || 6379;
-const channel = process.env.CHANNEL || "channel1";
+const redisChannel = process.env.CHANNEL || "channel1";
+
+// mysql
+const sqlHost = process.env.MYSQL_HOST || "localhost";
+const sqlUser = process.env.MYSQL_USERNAME || "root";
+const sqlPassword = process.env.MYSQL_PASSWORD || "password";
+const sqlDatabase = process.env.MYSQL_DATABASE || "mydb";
+const sqlTable = process.env.MYSQL_TABLE || "mytable";
 
 // debug with following -
-// console.log({ port, username, password, redisHost, redisPort, channel });
+// console.log({ expressPort, redisUsername, redisPassword, redisHost, redisPort, redisChannel });
+
+console.log({ sqlHost, sqlUser, sqlPassword, sqlDatabase });
+
+// configs
+const redisUrl = `redis://${redisUsername}:${redisPassword}@${redisHost}:${redisPort}`;
+const dbConfig = {
+  host: sqlHost,
+  user: sqlUser,
+  password: sqlPassword,
+  database: sqlDatabase,
+};
 
 const app = express();
-app.use(express.json());
+// const publisher = createClient({ url: redisUrl });
+const getData = async () => {
+  const sqlQuery = `SELECT data FROM ${sqlTable}`;
+  const sqlConnection = await mysql.createConnection(dbConfig);
+  return sqlConnection.execute(sqlQuery);
+};
+
+const createData = async (data) => {
+  const sqlQuery = `INSERT INTO ${sqlTable} (data) VALUES ('${data}')`;
+  const sqlConnection = await mysql.createConnection(dbConfig);
+  return sqlConnection.execute(sqlQuery);
+};
+
 // const publisher = createClient();
-const publisher = createClient({
-  url: `redis://${username}:${password}@${redisHost}:${redisPort}`,
-});
 
-// publisher events
-publisher.connect();
-publisher.on("error", (err) => console.log("Redis error", err));
-publisher.on("connect", () => console.log("\n Connected to Redis \n"));
-publisher.on("ready", () => console.log("\n Redis ready for action! \n"));
-publisher.on("reconnecting", () => console.log("\n Reconnecting to Redis \n"));
+// publisher events adn status
+// publisher.connect();
+// publisher.on("error", (err) => console.log("Redis error", err));
+// publisher.on("connect", () => console.log("\n Connected to Redis \n"));
+// publisher.on("ready", () => console.log("\n Redis ready for action! \n"));
+// publisher.on("reconnecting", () => console.log("\n Reconnecting to Redis \n"));
 
-// endpoints
+// call back fn is required
 
+// express endpoints
+app.use(express.json());
 app.get("/", (_, res) => res.status(200).send("connected to server 1!"));
-
-app.get("/data", (_, res) => res.status(200).send("success fetching from DB"));
-
-app.post("/create", async (req, res) => {
-  const { data } = req?.body;
+app.get("/data", async (_, res) => {
   try {
-    const subscriberCount = await publisher.publish(channel, data);
-    res.status(200).json({ message: "success", subscriberCount });
+    const [results, _] = await getData();
+    res.status(200).json({ message: "success", results });
   } catch (error) {
     res.status(500).json({ message: "failure", error });
   }
 });
 
-app.listen(port, () => console.log(`Served on port ${port}`));
+app.post("/create", async (req, res) => {
+  const { data } = req?.body;
+  try {
+    // const subscriberCount = await publisher.publish(redisChannel, data);
+    const results = await createData(data);
+    // res.status(200).json({ message: "success", subscriberCount });
+    res.status(200).json({ message: "success", results });
+  } catch (error) {
+    res.status(500).json({ message: "failure", error });
+  }
+
+  console.log(data);
+});
+
+app.listen(expressPort, () => console.log(`served on port ${expressPort}`));

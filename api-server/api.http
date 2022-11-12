@@ -1,12 +1,15 @@
 ### test connection
 GET http://localhost:5001/
 
+### test connection
+GET http://localhost:5001/data
+
 
 ### create a new user
 POST http://localhost:5001/create
 Content-Type: application/json
 
 {
-  "data": "random data"
+  "data": "from 1"
 }
 
