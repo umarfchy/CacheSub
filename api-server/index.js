@@ -12,7 +12,7 @@ const redisHost = process.env.REDIS_HOST || "redis";
 const redisPort = process.env.REDIS_PORT || 6379;
 const channel = process.env.CHANNEL || "channel1";
 
-// for debug purpose
+// debug with following -
 // console.log({ port, username, password, redisHost, redisPort, channel });
 
 const app = express();
@@ -22,6 +22,7 @@ const publisher = createClient({
   url: `redis://${username}:${password}@${redisHost}:${redisPort}`,
 });
 
+// publisher events
 publisher.connect();
 publisher.on("error", (err) => console.log("Redis error", err));
 publisher.on("connect", () => console.log("\n Connected to Redis \n"));
