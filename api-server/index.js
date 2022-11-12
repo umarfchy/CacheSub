@@ -32,8 +32,6 @@ const dbConfig = {
   database: sqlDatabase,
 };
 
-const app = express();
-app.use(cors());
 const redisClient = createClient({ url: redisUrl });
 
 const getData = async () => {
@@ -69,8 +67,12 @@ const publishToRedis = async (data) => {
   return subscriberCount;
 };
 
-// express endpoints
+const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors());
+
+// express endpoints
 app.get("/", (_, res) => res.status(200).send("connected to server 1!"));
 app.get("/data", async (_, res) => {
   try {
@@ -94,9 +96,13 @@ app.get("/data", async (_, res) => {
 
 app.post("/create", async (req, res) => {
   const { data } = req.body;
+  console.log({ data });
   try {
+    if (!data) throw new Error("missing data");
     const subscriberCount = await publishToRedis(data);
-    await deleteRedisCache();
+    console.log({ subscriberCount });
+    const test = await deleteRedisCache();
+    console.log({ test });
     res.status(200).json({ message: "success", subscriberCount });
   } catch (error) {
     console.log({ error });

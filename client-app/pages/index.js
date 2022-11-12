@@ -7,16 +7,6 @@ export default function Home() {
   const getDataUrl = `${baseUrl}/data`;
   const createDataUrl = `${baseUrl}/create`;
 
-  const createData = async (inputText) => {
-    try {
-      const { data } = await axios.post(createDataUrl, { data: inputText });
-      console.log({ message: "posted data", data });
-      return data;
-    } catch (error) {
-      console.error({ message: "failed creating data.", error });
-    }
-  };
-
   const getData = async () => {
     try {
       const { data: res } = await axios.get(getDataUrl);
@@ -28,6 +18,16 @@ export default function Home() {
     }
   };
 
+  const createData = async (inputText) => {
+    try {
+      const { data } = await axios.post(createDataUrl, { data: inputText });
+      console.log({ message: "posted data", data });
+      return data;
+    } catch (error) {
+      console.error({ message: "failed creating data.", error });
+    }
+  };
+  
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     await createData(evt.target.value);
