@@ -45,6 +45,8 @@ const createData = async (data) => {
 // for debug purpose
 // console.log({ port, username, password, redisHost, redisPort, channel });
 
+const subscriber = createClient({ url: redisUrl });
+
 (async function () {
   try {
     subscriber.connect();
@@ -56,9 +58,9 @@ const createData = async (data) => {
     });
 
     // call back fn is required
-    subscriber.subscribe(channel, (message) => {
+    subscriber.subscribe(channel, async (message) => {
       console.log("subscriber service:- ", message);
-      
+      await createData(message);
     });
   } catch (error) {
     // exited the reconnection logic

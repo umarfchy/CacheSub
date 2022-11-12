@@ -37,7 +37,8 @@ const dbConfig = {
 };
 
 const app = express();
-// const publisher = createClient({ url: redisUrl });
+const publisher = createClient({ url: redisUrl });
+
 const getData = async () => {
   const sqlQuery = `SELECT data FROM ${sqlTable}`;
   const sqlConnection = await mysql.createConnection(dbConfig);
@@ -53,11 +54,11 @@ const createData = async (data) => {
 // const publisher = createClient();
 
 // publisher events adn status
-// publisher.connect();
-// publisher.on("error", (err) => console.log("Redis error", err));
-// publisher.on("connect", () => console.log("\n Connected to Redis \n"));
-// publisher.on("ready", () => console.log("\n Redis ready for action! \n"));
-// publisher.on("reconnecting", () => console.log("\n Reconnecting to Redis \n"));
+publisher.connect();
+publisher.on("error", (err) => console.log("Redis error", err));
+publisher.on("connect", () => console.log("\n Connected to Redis \n"));
+publisher.on("ready", () => console.log("\n Redis ready for action! \n"));
+publisher.on("reconnecting", () => console.log("\n Reconnecting to Redis \n"));
 
 // call back fn is required
 
