@@ -1,41 +1,41 @@
 version: '3'
 
 services:
-  # client:
-  #   container_name: "client-app"
-  #   build: ./client-app/.
-  #   ports:
-  #     - '3000:3000'
-  #   networks:
-  #     - mynetwork
-  #   depends_on:
-  #     - redis
-  #     - db
-  #     - api-server
-  #     - subscriber-server
+  client:
+    container_name: "client-app"
+    build: ./client-app/.
+    ports:
+      - '3000:3000'
+    networks:
+      - mynetwork
+    depends_on:
+      - redis
+      - db
+      - api-server
+      - subscriber-server
 
-  # api-server:
-  #   container_name: "api-server"
-  #   build: ./api-server/.
-  #   environment:
-  #     - PORT=5001
-  #     - REDIS_PASSWORD=${REDIS_PASSWORD}
-  #     - REDIS_HOST=${REDIS_HOST}
-  #     - REDIS_PORT=${REDIS_PORT}
-  #     - REDIS_CHANNEL=${REDIS_CHANNEL}
-  #     - MYSQL_HOST=${MYSQL_HOST}
-  #     - MYSQL_DATABASE=${MYSQL_DATABASE}
-  #     - MYSQL_USERNAME=${MYSQL_USERNAME}
-  #     - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-  #     - MYSQL_TABLE=${MYSQL_TABLE}
-  #   ports:
-  #     - '5001:5001'
-  #   networks:
-  #     - mynetwork
-  #   depends_on:
-  #     - db
-  #     - redis
-  #     - subscriber-server
+  api-server:
+    container_name: "api-server"
+    build: ./api-server/.
+    environment:
+      - PORT=5001
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_CHANNEL=${REDIS_CHANNEL}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_TABLE=${MYSQL_TABLE}
+    ports:
+      - '5001:5001'
+    networks:
+      - mynetwork
+    depends_on:
+      - db
+      - redis
+      - subscriber-server
 
   subscriber-server:
     container_name: "subscriber-server"
@@ -62,8 +62,8 @@ services:
     build: ./db/.
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-    ports:
-      - '3306:3306'
+    # ports:
+    #   - '3306:3306'
     networks:
       - mynetwork
 
@@ -72,8 +72,8 @@ services:
     image: "redis:latest"
     restart: always
     command: redis-server --save 20 1 --loglevel warning --requirepass mypassword
-    ports:
-      - '6379:6379'
+    # ports:
+    #   - '6379:6379'
     networks:
       - mynetwork
 
