@@ -10,9 +10,9 @@ export default function Home() {
 
   const getData = async () => {
     try {
-      const { data: res } = await axios.get(getDataUrl);
-      updateValue(res.data);
-      console.log({ message: "got data", data: res.data });
+      const { data } = await axios.get(getDataUrl);
+      updateValue(data);
+      console.log({ message: "got data", data });
       return res;
     } catch (error) {
       console.error({ message: "failed fetching data.", error });
@@ -32,33 +32,32 @@ export default function Home() {
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     await createData(input);
+    setInput("");
   };
 
   return (
     <main style={{ display: "grid", placeItems: "center", height: "100vh" }}>
       <section style={{ zoom: "1.2", display: "grid", placeItems: "center" }}>
         <form onSubmit={handleSubmit}>
-          <input type="text" onChange={(evt) => setInput(evt.target.value)} />
+          <input
+            type="text"
+            value={input}
+            onChange={(evt) => setInput(evt.target.value)}
+          />
           <input type="submit" value="create data" />
         </form>
         <button onClick={getData} style={{ margin: "1rem 0" }}>
           get data
         </button>
-        <p>
+        <p style={{ textAlign: "justify" }}>
           Try creating a data using input. Then click on "get data" twice to see
-          the magic
+          the magic. Keep an eye on the isCached property when you input new
+          data.
         </p>
       </section>
-      <section
-        style={{
-          border: "1px solid lightsalmon",
-          height: "20rem",
-          width: "20rem",
-          textAlign: "center",
-        }}
-      >
-        <h3>output</h3>
-        <p>{JSON.stringify(value, null, 2)}</p>
+      <section style={{ height: "50vh" }}>
+        <h3 style={{ textAlign: "center" }}>output</h3>
+        <pre>{JSON.stringify(value, null, 2)}</pre>
       </section>
     </main>
   );
