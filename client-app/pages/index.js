@@ -3,6 +3,7 @@ import axios from "axios";
 
 export default function Home() {
   const [value, updateValue] = useState("create new data");
+  const [input, setInput] = useState("");
   const baseUrl = "http://localhost:5001";
   const getDataUrl = `${baseUrl}/data`;
   const createDataUrl = `${baseUrl}/create`;
@@ -27,17 +28,17 @@ export default function Home() {
       console.error({ message: "failed creating data.", error });
     }
   };
-  
+
   const handleSubmit = async (evt) => {
     evt.preventDefault();
-    await createData(evt.target.value);
+    await createData(input);
   };
 
   return (
     <main style={{ display: "grid", placeItems: "center", height: "100vh" }}>
       <section style={{ zoom: "1.2", display: "grid", placeItems: "center" }}>
         <form onSubmit={handleSubmit}>
-          <input type="text" />
+          <input type="text" onChange={(evt) => setInput(evt.target.value)} />
           <input type="submit" value="create data" />
         </form>
         <button onClick={getData} style={{ margin: "1rem 0" }}>
