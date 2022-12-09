@@ -11,8 +11,8 @@
 
 Project Dataflow Outline:
 
-1. nextjs client -> express api server -> redis pub/sub -> worker server -> mysql database
-1. nextjs client -> express api server -> redis cache -> express api server -> mysql database
+1. nextjs client ➡️ express api server ➡️ redis pub/sub ➡️ worker server ➡️ mysql database
+1. nextjs client ➡️ express api server ➡️ redis cache ➡️ express api server ➡️ mysql database
 
 Explanation:
 
