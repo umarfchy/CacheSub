@@ -2,9 +2,11 @@
 
 ## Introduction
 
-<figure align="center"> 
+<figure > 
+<p align="center">
   <img src="./assets/dataflow_diagram.jpg" alt="Dataflow Diagram" style="background-color:white" />
   <figcaption>Dataflow Diagram</figcaption> 
+</p>
 </figure>
 
 Project Dataflow Outline:
