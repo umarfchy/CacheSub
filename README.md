@@ -1,4 +1,21 @@
-# nodejs-redis-pub-sub-demo
-A architecture showing pub/sub feature on redis using nodejs 🚀
+# Nextjs Express Redis Microservice Architecture 
 
-https://anuragbhandari.com/coding-tech/prevent-redis-client-from-crashing-your-node-js-app-901/
+## Introduction
+
+Project Dataflow Outline:
+1. nextjs client -> express api server -> redis pub/sub -> express worker server -> mysql database
+1. nextjs client -> express api server -> redis cache -> express api server -> mysql database
+
+Explanation:
+1. The nextjs client is the front end of the application communicates with the express api server to get and post data to the express worker server and the mysql database.
+
+1. The express api server is the middle layer of the application. When it receives a post request from the nextjs client, it publishes a message to the redis pub/sub. When it receives a get request from the nextjs client, it checks the redis cache for the data. If the data is not in the redis cache, it sends a request to the database to get the data and caches the data in the redis cache for future requests. If the data is in the redis cache, it sends the data to the nextjs client. It is also responsible for sending responses to the nextjs client.
+
+1. The express worker server is a microservice that subscribes to the redis pub/sub and receives messages from the express api server when a post request is made from the nextjs client. It is responsible for sending requests to the mysql database to store the data.
+
+Features:
+1. Nextjs Client
+1. Express Server
+1. Redis Cache and Pub/Sub
+1. MySQL Database
+1. Docker Compose
