@@ -12,7 +12,7 @@ services:
       - redis
       - db
       - api-server
-      - subscriber-server
+      - worker-server
 
   api-server:
     container_name: "api-server"
@@ -35,11 +35,11 @@ services:
     depends_on:
       - db
       - redis
-      - subscriber-server
+      - worker-server
 
-  subscriber-server:
-    container_name: "subscriber-server"
-    build: ./subscriber-server/.
+  worker-server:
+    container_name: "worker-server"
+    build: ./worker-server/.
     environment:
       - PORT=5002
       - REDIS_PASSWORD=${REDIS_PASSWORD}
