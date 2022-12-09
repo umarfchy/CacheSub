@@ -3,7 +3,7 @@
 ## Introduction
 
 <figure align="center"> 
-  <img src="./assets/dataflow_diagram.png" alt="Dataflow Diagram" style="background-color:white" />
+  <img src="./assets/dataflow_diagram.jpg" alt="Dataflow Diagram" style="background-color:white" />
   <figcaption>Dataflow Diagram</figcaption> 
 </figure>
 
