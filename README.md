@@ -5,9 +5,10 @@
 <figure > 
 <p align="center">
   <img src="./assets/dataflow_diagram.jpg" alt="Dataflow Diagram" style="background-color:white" />
-  <figcaption>Dataflow Diagram</figcaption> 
+  <p align="center">Dataflow Diagram</p> 
 </p>
 </figure>
+
 
 Project Dataflow Outline:
 
