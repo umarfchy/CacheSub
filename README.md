@@ -9,12 +9,6 @@
 </p>
 </figure>
 
-
-Project Dataflow Outline:
-
-1. nextjs client ➡️ express api server ➡️ redis pub/sub ➡️ worker server ➡️ mysql database
-1. nextjs client ➡️ express api server ➡️ redis cache ➡️ express api server ➡️ mysql database
-
 Explanation:
 
 1. The nextjs client is the front end of the application and it communicates with the express api server to get and post data to the worker server and the mysql database.
